@@ -49,16 +49,17 @@ public class WechatWithdrawController{
      * @return 提现申请提交后，返回验证码验证页面
      */
     @PostMapping("/wechatWithdraw")
-    public String withdrawNew(@OpenId String openId, HttpServletRequest request, String payee, String account, String bank, String mobile, BigDecimal withdraw,
+    public String withdrawNew(@OpenId String openId, HttpServletRequest request, String payee, String account, String bank, String mobile, String withdrawMoney,
                               String invoice,String logisticsnumber,String logisticscompany,@AuthenticationPrincipal Login login, Model model)
             throws SystemMaintainException ,IOException {
-        if(login.getCommissionBalance().compareTo(withdraw)<0){
-            return "用户可提现余额不足";
+        if(login.getCommissionBalance().compareTo(BigDecimal.valueOf(Double.valueOf(withdrawMoney)))<0){
+            log.info("用户可提现余额不足");
+            return "wechat@withdraw.html";
         }
         if("0".equals(invoice)) {
-            Withdraw withdraw1 = wechatWithdrawService.withdrawNew(payee, account, bank, mobile, withdraw, logisticsnumber, logisticscompany);
+            Withdraw withdraw1 = wechatWithdrawService.withdrawNew(payee, account, bank, mobile, withdrawMoney, logisticsnumber, logisticscompany);
         }else if("1".equals(invoice)) {
-            Withdraw withdraw1 = wechatWithdrawService.withdrawNew(payee, account, bank, mobile, withdraw, null,null);
+            Withdraw withdraw1 = wechatWithdrawService.withdrawNew(payee, account, bank, mobile, withdrawMoney, null,null);
         }
         verificationCodeService.sendCode(mobile,wechatWithdrawService.withdrawVerificationType());
         return "wechat@withdrawVerify.html";

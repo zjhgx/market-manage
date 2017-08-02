@@ -25,7 +25,7 @@ public interface WechatWithdrawService {
      */
 
     @Transactional
-    Withdraw withdrawNew(String payee, String account, String bank, String mobile, BigDecimal withdraw, String logisticsnumber,String logisticscompany);
+    Withdraw withdrawNew(String payee, String account, String bank, String mobile, String withdraw, String logisticsnumber,String logisticscompany);
 
     /**
      * @return 用于提现校验的验证码

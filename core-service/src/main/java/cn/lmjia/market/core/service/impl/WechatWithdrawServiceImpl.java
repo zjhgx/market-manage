@@ -27,7 +27,7 @@ public class WechatWithdrawServiceImpl implements WechatWithdrawService{
     private WechatWithdrawService wechatWithdrawService;
 
     @Override
-    public Withdraw withdrawNew(String payee, String account, String bank, String mobile, BigDecimal withdrawMoney, String logisticsNumber,String logisticsCompany ) {
+    public Withdraw withdrawNew(String payee, String account, String bank, String mobile, String withdrawMoney, String logisticsNumber,String logisticsCompany ) {
 
         Invoice invoice = new Invoice();
         invoice.setCompanyName("利每家科技有限公司");
@@ -39,7 +39,7 @@ public class WechatWithdrawServiceImpl implements WechatWithdrawService{
         withdraw.setAccount(account);
         withdraw.setBank(bank);
         withdraw.setMobile(mobile);
-        withdraw.setWithdrawMoney(withdrawMoney);
+        withdraw.setWithdrawMoney(BigDecimal.valueOf(Double.valueOf(withdrawMoney)));
         withdraw.setInvoice(invoice);
         withdraw.setWithdrawStatus(WithdrawStatus.checkPending);
         return wechatWithdrawRepository.save(withdraw);
