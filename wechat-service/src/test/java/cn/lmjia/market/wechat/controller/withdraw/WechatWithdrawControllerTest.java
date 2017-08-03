@@ -35,7 +35,7 @@ public class WechatWithdrawControllerTest extends WechatTestBase {
         updateAllRunWith(user);
 
         makeSuccessOrder(user);
-        makeSuccessOrder(user);
+//        System.err.println(readService.currentBalance(user));
         driver.get("http://localhost/wechatWithdrawPage");
         assertThat(driver.getTitle())
                 .isEqualToIgnoringCase("我要提现");
@@ -52,16 +52,16 @@ public class WechatWithdrawControllerTest extends WechatTestBase {
                         .param("account", account)
                         .param("bank", bank)
                         .param("mobile", mobile)
-                        .param("withdrawMoney", "5.00")
-                        .param("invoice", "0")
+                        .param("withdrawMoney", "500.00")
+                        .param("invoice", "1")
         )
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andReturn().getResponse().getHeader("Location");
 
         driver.get("http://localhost" + withdrawUri);
-
-        //
+//        System.err.println(readService.currentBalance(user));
+//        //
         // 2，新用户
         // 成功下了一笔订单 获得佣金X
         // 尝试提现 会看到可提现金额为X

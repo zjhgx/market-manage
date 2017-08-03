@@ -121,14 +121,13 @@ public class ReadServiceImpl implements ReadService {
         // 提现求和
         CriteriaQuery<BigDecimal> sumWithdraw = criteriaBuilder.createQuery(BigDecimal.class);
         Root<Withdraw> withdrawRoot = sumWithdraw.from(Withdraw.class);
-        sumWithdraw = sumWithdraw.select(criteriaBuilder.sum(root.get("withdrawMoney")))
+        sumWithdraw = sumWithdraw.select(criteriaBuilder.sum(withdrawRoot.get("withdrawMoney")))
                 .where(
                         criteriaBuilder.and(
                                 criteriaBuilder.equal(withdrawRoot.get("payee"),login)
                         )
                 );
-
-
+        System.err.println();
         try {
             return new Money(entityManager.createQuery(sumQuery).getSingleResult().add(login.getCommissionBalance()));
         } catch (NoResultException | NullPointerException ignored) {
