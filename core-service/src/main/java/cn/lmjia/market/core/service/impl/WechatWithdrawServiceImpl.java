@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 public class WechatWithdrawServiceImpl implements WechatWithdrawService{
@@ -27,20 +28,23 @@ public class WechatWithdrawServiceImpl implements WechatWithdrawService{
     private WechatWithdrawService wechatWithdrawService;
 
     @Override
-    public Withdraw withdrawNew(String payee, String account, String bank, String mobile, String withdrawMoney, String logisticsNumber,String logisticsCompany ) {
+    public Withdraw withdrawNew(String payee, String account, String bank, String mobile, String withdrawMoney, String invoice,String logisticsNumber,String logisticsCompany ) {
 
-        Invoice invoice = new Invoice();
-        invoice.setCompanyName("利每家科技有限公司");
-        invoice.setTaxnumber("91330108MA28MBU173");
-        invoice.setLogisticsnumber(logisticsNumber);
-        invoice.setLogisticscompany(logisticsCompany);
+        Invoice invoice1= new Invoice();
+        if("0".equals(invoice)){
+            invoice1.setCompanyName("利每家科技有限公司");
+            invoice1.setTaxnumber("91330108MA28MBU173");
+            invoice1.setLogisticsnumber(logisticsNumber);
+            invoice1.setLogisticscompany(logisticsCompany);
+        }
 
         Withdraw withdraw = new Withdraw();
         withdraw.setAccount(account);
         withdraw.setBank(bank);
         withdraw.setMobile(mobile);
         withdraw.setWithdrawMoney(BigDecimal.valueOf(Double.valueOf(withdrawMoney)));
-        withdraw.setInvoice(invoice);
+        withdraw.setInvoice(invoice1);
+        withdraw.setWithdrawTime(LocalDateTime.now());
         withdraw.setWithdrawStatus(WithdrawStatus.checkPending);
         return wechatWithdrawRepository.save(withdraw);
     }

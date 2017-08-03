@@ -2,10 +2,13 @@ package cn.lmjia.market.wechat.controller.withdraw;
 
 import cn.lmjia.market.core.config.other.SecurityConfig;
 import cn.lmjia.market.core.entity.Login;
+import cn.lmjia.market.core.service.ReadService;
 import cn.lmjia.market.wechat.WechatTestBase;
+import cn.lmjia.market.wechat.page.PaySuccessPage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
@@ -18,6 +21,8 @@ public class WechatWithdrawControllerTest extends WechatTestBase {
 
     private static final Log log = LogFactory.getLog(WechatWithdrawControllerTest.class);
 
+    @Autowired
+    private ReadService readService;
     @Test
     public void go() throws Exception{
         // 测试就是校验我们的工作成功
@@ -29,15 +34,17 @@ public class WechatWithdrawControllerTest extends WechatTestBase {
         bindDeveloperWechat(user);
         updateAllRunWith(user);
 
+        makeSuccessOrder(user);
+        makeSuccessOrder(user);
         driver.get("http://localhost/wechatWithdrawPage");
         assertThat(driver.getTitle())
                 .isEqualToIgnoringCase("我要提现");
+
 
         String payee = "oneal";
         String account = "6217001480003532428";
         String bank = "建设银行";
         String mobile = "15267286525";
-        String invoice = "0";
 
         //新用户可提现佣金余额为0，强行提现
         String withdrawUri = mockMvc.perform(wechatPost("/wechatWithdraw")
@@ -77,29 +84,6 @@ public class WechatWithdrawControllerTest extends WechatTestBase {
         // 同时看到已提现金额为Y
     }
 
-    @Test
-    public void doWithdraw() throws Exception {
-        Login user = createNewUserByShare();
-        bindDeveloperWechat(user);
-        updateAllRunWith(user);
-
-        String withdrawUri = mockMvc.perform(wechatPost("/wechatWithdraw")
-                .param("payee", "oneal")
-                .param("account", "6217001480003532428")
-                .param("bank", "建设银行")
-                .param("mobile", "15267286525")
-                .param("withdrawMoney", "500.00")
-                .param("invoice", "0")
-//                .param("logisticsNumber", "710389211847")
-//                .param("logisticsCompany", "圆通物流")
-        )
-                .andDo(print())
-                .andExpect(status().is2xxSuccessful())
-                .andReturn().getResponse().getHeader("Location");
-
-        driver.get("http://localhost" + withdrawUri);
-
-    }
 
     @Test
     public void withdrawVerify() throws Exception {

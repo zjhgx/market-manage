@@ -19,13 +19,14 @@ public interface WechatWithdrawService {
      * @param bank               开户行
      * @param mobile             收款人电话
      * @param withdraw           提现金额
-     * @param logisticsnumber    物流单号
-     * @param logisticscompany   物流公司
+     * @param invoice            是否有发票
+     * @param logisticsNumber    物流单号
+     * @param logisticsCompany   物流公司
      * @return 新创建的提现
      */
 
     @Transactional
-    Withdraw withdrawNew(String payee, String account, String bank, String mobile, String withdraw, String logisticsnumber,String logisticscompany);
+    Withdraw withdrawNew(String payee, String account, String bank, String mobile, String withdraw, String invoice,String logisticsNumber,String logisticsCompany);
 
     /**
      * @return 用于提现校验的验证码

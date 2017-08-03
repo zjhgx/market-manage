@@ -8,6 +8,7 @@ import cn.lmjia.market.core.entity.withdraw.Invoice;
 import cn.lmjia.market.core.entity.withdraw.Withdraw;
 import cn.lmjia.market.core.model.ApiResult;
 import cn.lmjia.market.core.service.MainOrderService;
+import cn.lmjia.market.core.service.ReadService;
 import cn.lmjia.market.core.service.WechatWithdrawService;
 import com.huotu.verification.service.VerificationCodeService;
 import me.jiangcai.payment.exception.SystemMaintainException;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -36,6 +38,8 @@ public class WechatWithdrawController{
     private WechatWithdrawService wechatWithdrawService;
     @Autowired
     private VerificationCodeService verificationCodeService;
+    @Autowired
+    private ReadService readService;
 
     /**
      * @return 我要提现页面
@@ -50,22 +54,18 @@ public class WechatWithdrawController{
      */
     @PostMapping("/wechatWithdraw")
     public String withdrawNew(@OpenId String openId, HttpServletRequest request, String payee, String account, String bank, String mobile, String withdrawMoney,
-                              String invoice,String logisticsnumber,String logisticscompany,@AuthenticationPrincipal Login login, Model model)
+                              String invoice,String logisticsNumber,String logisticsCompany,@AuthenticationPrincipal Login login, Model model)
             throws SystemMaintainException ,IOException {
-        if(login.getCommissionBalance().compareTo(BigDecimal.valueOf(Double.valueOf(withdrawMoney)))<0){
+        if(readService.currentBalance(login).getAmount().compareTo(BigDecimal.valueOf(Double.valueOf(withdrawMoney)))<0){
             log.info("用户可提现余额不足");
             return "wechat@withdraw.html";
         }
-        if("0".equals(invoice)) {
-            Withdraw withdraw1 = wechatWithdrawService.withdrawNew(payee, account, bank, mobile, withdrawMoney, logisticsnumber, logisticscompany);
-        }else if("1".equals(invoice)) {
-            Withdraw withdraw1 = wechatWithdrawService.withdrawNew(payee, account, bank, mobile, withdrawMoney, null,null);
-        }
+        Withdraw withdraw1 = wechatWithdrawService.withdrawNew(payee, account, bank, mobile, withdrawMoney, invoice,logisticsNumber, logisticsCompany);
         verificationCodeService.sendCode(mobile,wechatWithdrawService.withdrawVerificationType());
         return "wechat@withdrawVerify.html";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/misc/sendWithdrawCode")
+    @PostMapping("/misc/sendWithdrawCode")
     @ResponseBody
     public ApiResult sendWithdrawCode(String mobile) throws IOException {
         verificationCodeService.sendCode(mobile, wechatWithdrawService.withdrawVerificationType());
