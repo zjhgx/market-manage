@@ -105,8 +105,8 @@ $(function () {
 
     $(document).on('click', '.js-search', function () {
         table.ajax.reload();
-    }).on('click', '.js-checkLogistics', function () {
-        // $('#content', parent.document).attr('src', 'logisticsDetail.html');
+    }).on('click', '.js-info', function () {
+        window.location.href = '_withdrawDetail.html?id=' + $(this).data('id');
     });
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
