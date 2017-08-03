@@ -30,6 +30,80 @@ Mock.mock(/\/agentData\/list/, "get", {
     ]
 });
 
+Mock.mock(/\/commDetail\/list/, "get", {
+    "draw": 1,
+    "recordsTotal": 23,
+    "recordsFiltered": 23,
+    "data|10": [
+        {
+            'id': '@id',
+            'dealer': '@cname',
+            'rank': '@pick(["代理商","省代理","爱心天使","市代理"])',
+            'commType': '销售收益',
+            'orderId': "@id",
+            'orderTotal': "@integer(1000, 9999)",
+            'proportion': "@integer(10, 99)%",
+            'commission': "@float(60, 100, 1, 2)",
+            'commTime': "@datetime('yyyy-MM-dd')",
+            'children|4-6': [{
+                'id': '@id',
+                'dealer': '@cname',
+                'rank': '@pick(["代理商","省代理","爱心天使","市代理"])',
+                'commType': '其他收益',
+                'orderId': "@id",
+                'orderTotal': "@integer(1000, 9999)",
+                'proportion': "@integer(10, 99)%",
+                'commission': "@float(60, 100, 1, 2)",
+                'commTime': "@datetime('yyyy-MM-dd')"
+            }]
+        }
+    ]
+});
+
+Mock.mock(/\/withdraw\/list/, "get", {
+    "draw": 1,
+    "recordsTotal": 23,
+    "recordsFiltered": 23,
+    "data": [
+        {
+            'id': '@id',
+            'serial': '@increment',
+            'dealer': '@cname',
+            'withdrawAmount': '@integer(1000, 9999)',
+            'withdrawBalance': '@integer(1000, 99999)',
+            'startDate': "@datetime('yyyy-MM-dd')",
+            'endDate': "@datetime('yyyy-MM-dd')",
+            'account': "@integer(1000, 9999)656425422",
+            'payee': "@cname",
+            'logisticsCompany': "天天快递",
+            'logisticsId': "@id",
+            'withdrawTime': '@datetime("yyyy-MM-dd")',
+            'status': '待审核',
+            'statusCode': '1',
+            'operator': '-',
+            'remark': ''
+        },
+        {
+            'id': '@id',
+            'serial': '@increment',
+            'dealer': '@cname',
+            'withdrawAmount': '@integer(1000, 9999)',
+            'withdrawBalance': '@integer(1000, 99999)',
+            'startDate': "@datetime('yyyy-MM-dd')",
+            'endDate': "@datetime('yyyy-MM-dd')",
+            'account': "4445656425422",
+            'payee': "@cname",
+            'logisticsCompany': "天天快递",
+            'logisticsId': "@id",
+            'withdrawTime': '@datetime("yyyy-MM-dd")',
+            'status': '成功',
+            'statusCode': '0',
+            'operator': '@cname',
+            'remark': ''
+        }
+    ]
+});
+
 Mock.mock(/\/refund\/list/, "get", {
     "draw": 1,
     "recordsTotal": 23,
@@ -279,8 +353,6 @@ Mock.mock(/\/storage\/transfer/, "get", {
     ]
 });
 
-<<<<<<< HEAD
-=======
 Mock.mock(/\/product\/cat/, "get", {
     "draw": 1,
     "recordsTotal": 4,
@@ -294,15 +366,11 @@ Mock.mock(/\/product\/cat/, "get", {
     ]
 });
 
-<<<<<<< HEAD
->>>>>>> 98838e8638d2f13daa5da7373da0973fff7aa4a6
-=======
 Mock.mock(/\/products\/category/, {
     "resultCode": 200,
     "resultMsg": "ok"
 });
 
->>>>>>> 6578399806588f7de6bee2a13459a84733d48cc9
 Mock.mock(/\/products\/\d/, {
     "resultCode": 200,
     "resultMsg": "ok"
