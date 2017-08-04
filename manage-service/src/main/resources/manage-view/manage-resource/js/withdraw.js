@@ -77,7 +77,7 @@ $(function () {
                 data: function (item) {
                     var a = '<a href="javascript:;" class="js-info" data-id="' + item.id + '"><i class="fa fa-check-circle-o"></i>&nbsp;查看</a>';
                     if(+item.statusCode === 1)
-                        a += '<a href="javascript:;" class="btn btn-primary btn-xs js-dispatch" data-id="' + item.id + '">审核</a>';
+                        a += '<a href="javascript:;" class="btn btn-primary btn-xs js-pending" data-id="' + item.id + '">审核</a>';
                     return a;
                 }
             }
@@ -107,6 +107,8 @@ $(function () {
         table.ajax.reload();
     }).on('click', '.js-info', function () {
         window.location.href = '_withdrawDetail.html?id=' + $(this).data('id');
+    }).on('click', '.js-pending', function () {
+        window.location.href = '_withdrawPending.html?id=' + $(this).data('id');
     });
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
