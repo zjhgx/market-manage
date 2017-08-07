@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+<!--/*@thymesVar id="goodList" type="java.util.Collection<cn.lmjia.market.core.entity.MainGood>"*/-->
+<!--/*@thymesVar id="trj" type="boolean"*/-->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -111,7 +113,7 @@
                         <!--data-service-charge 服务费-->
                         <!--data-model 型号-->
                         <option value="1" data-price="2820" data-model="HZCX01"
-                                th:each="good:${@mainGoodService.forSale()}"
+                                th:each="good:${goodList}"
                                 th:value="${good.id}"
                                 th:data-price="${good.product.deposit}"
                                 th:data-service-charge="${good.product.install}"
@@ -119,8 +121,12 @@
                                 th:text="${good.product.name}">厨下净水机
                         </option>
                         <option th:remove="all" value="2" data-price="2820" data-model="HZLS01">立式净水器</option>
-                        <option th:remove="all" value="4" data-price="3000" data-service-charge="980" data-model="LZCX01">量子厨下净水机</option>
-                        <option th:remove="all" value="5" data-price="3000" data-service-charge="980" data-model="LZLS01">量子立式净水机</option>
+                        <option th:remove="all" value="4" data-price="3000" data-service-charge="980"
+                                data-model="LZCX01">量子厨下净水机
+                        </option>
+                        <option th:remove="all" value="5" data-price="3000" data-service-charge="980"
+                                data-model="LZLS01">量子立式净水机
+                        </option>
                         <option th:remove="all" value="7" data-price="5000" data-model="ESL-HM01">量子空气净化器</option>
                         <option th:remove="all" value="8" data-price="9800" data-model="SP70">量子食品优化宝</option>
                         <option th:remove="all" value="9" data-price="100" data-model="LZXP01">量子防辐射芯片（片）</option>
@@ -204,15 +210,15 @@
                 <input type="hidden" title="联系电话" name="invoiceMobile" disabled>
             </div>
             <!--<div class="weui-cell js-install">-->
-                <!--<div class="weui-cell__hd">-->
-                    <!--<label class="weui-label">初装费用</label>-->
-                <!--</div>-->
-                <!--<div class="weui-cell__bd">-->
-                    <!--<p class="weui-input" id="J_installationCost">-->
-                        <!--<span>180</span>-->
-                        <!--<span class="unit-txt">元 / 台</span>-->
-                    <!--</p>-->
-                <!--</div>-->
+            <!--<div class="weui-cell__hd">-->
+            <!--<label class="weui-label">初装费用</label>-->
+            <!--</div>-->
+            <!--<div class="weui-cell__bd">-->
+            <!--<p class="weui-input" id="J_installationCost">-->
+            <!--<span>180</span>-->
+            <!--<span class="unit-txt">元 / 台</span>-->
+            <!--</p>-->
+            <!--</div>-->
             <!--</div>-->
             <div class="weui-cell displayNone js-service">
                 <div class="weui-cell__hd">
@@ -238,28 +244,29 @@
                 </div>
             </div>
         </div>
-        <!--<div class="weui-cells weui-cells_form">-->
-            <!--<div class="weui-cell weui-cell_switch">-->
-                <!--<div class="weui-cell__bd">花呗分期</div>-->
-                <!--<div class="weui-cell__ft">-->
-                    <!--<input class="weui-switch view-switch" name="installmentHuabai" id="J_installment" type="checkbox"-->
-                           <!--value="1">-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="weui-cell weui-cell_vcode displayNone" id="J_checkCode">-->
-                <!--<div class="weui-cell__hd">-->
-                    <!--<label class="weui-label">按揭码</label>-->
-                <!--</div>-->
-                <!--<div class="weui-cell__bd">-->
-                    <!--<input type="hidden" name="isValid" title="判断是否检查通过">-->
-                    <!--<input class="weui-input" type="text" name="mortgageCode" placeholder="请输入按揭码" id="J_mortgageCode">-->
-                <!--</div>-->
-                <!--<div class="weui-cell__ft">-->
-                    <!--<button type="button" class="weui-vcode-btn" id="J_checkBtn">校验</button>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <div class="weui-cells weui-cells_checkbox">
+        <div th:if="${trj}" class="weui-cells weui-cells_form">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <input type="checkbox" class="weui-check" name="installmentHuabai" id="J_installment" value="1">
+                    <i class="weui-icon-checked"></i>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" placeholder="请输入投融家按揭码" name="authorising">
+                </div>
+                <div class="weui-cell__ft"><i class="weui-icon-warn"></i></div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">申请身份证</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" placeholder="请输入申请按揭的身份证号码" maxlength="18" minlength="18"
+                           name="idNumber">
+                </div>
+                <div class="weui-cell__ft"><i class="weui-icon-warn"></i></div>
+            </div>
+        </div>
+        <div th:if="${!trj}" class="weui-cells weui-cells_checkbox">
             <label class="weui-cell weui-check__label" for="J_installment">
                 <div class="weui-cell__hd">
                     <input type="checkbox" class="weui-check" name="installmentHuabai" id="J_installment" value="1">
@@ -492,5 +499,13 @@
 <!--生产环境请移除 End-->
 <script src="../../../../../../market-manage/web/src/main/webapp/assets/js/common/recommend.js"
         th:src="@{/assets/js/common/recommend.js}"></script>
-<script src="../wechat-resource/assets/js/orderPlace.js" th:src="@{/wechat-resource/assets/js/orderPlace.js}"></script>
+<script src="../wechat-resource/assets/js/orderPlace.js"
+        th:src="@{/wechat-resource/assets/js/orderPlace.js(v=1)}"></script>
+<script th:if="${trj}">
+    $(function () {
+        var input = $('#J_goodsAmount');
+        input.prop('readonly', true);
+        input.val(1);
+    })
+</script>
 </html>
