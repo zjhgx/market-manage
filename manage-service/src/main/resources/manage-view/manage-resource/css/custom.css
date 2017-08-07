@@ -345,3 +345,7 @@ textarea {
     vertical-align: text-top;
     line-height: 1.3em;
 }
+
+.form-control-static strong {
+    color: #000;
+}
