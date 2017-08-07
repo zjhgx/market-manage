@@ -2,20 +2,16 @@ package cn.lmjia.market.manage.controller;
 
 
 import cn.lmjia.market.core.entity.Depot;
-<<<<<<< HEAD
 import cn.lmjia.market.core.entity.Login;
 import cn.lmjia.market.core.entity.MainOrder;
 import cn.lmjia.market.core.entity.support.OrderStatus;
 import cn.lmjia.market.core.entity.support.WithdrawStatus;
 import cn.lmjia.market.core.entity.withdraw.Withdraw;
-=======
->>>>>>> bb9a6e25872f5345cafb45da2a9406ea6c9a82df
 import cn.lmjia.market.core.repository.WechatWithdrawRepository;
 import cn.lmjia.market.core.row.RowCustom;
 import cn.lmjia.market.core.row.RowDefinition;
 import cn.lmjia.market.core.row.supplier.JQueryDataTableDramatizer;
 import cn.lmjia.market.core.rows.DepotRows;
-<<<<<<< HEAD
 import cn.lmjia.market.core.rows.MainOrderRows;
 import cn.lmjia.market.core.rows.WithdrawRows;
 import cn.lmjia.market.core.service.WechatWithdrawService;
