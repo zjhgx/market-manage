@@ -39,7 +39,7 @@ public abstract  class WithdrawRows implements RowDefinition<Withdraw> {
     public List<FieldDefinition<Withdraw>> fields() {
         return Arrays.asList(
                 Fields.asBasic("id")
-                , Fields.asBasic("serialId")
+                , Fields.asBiFunction("withdrawId",Withdraw::getSerialId)
                 , Fields.asBasic("payee")
                 , Fields.asBasic("withdrawMoney")
                 , Fields.asBasic("withdrawMoney")//剩余可提现金额

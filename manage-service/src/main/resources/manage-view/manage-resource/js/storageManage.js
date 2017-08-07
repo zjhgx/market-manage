@@ -47,7 +47,7 @@ $(function () {
     myChart.setOption(option);
 
 
-    var table = $('#storageForm').DataTable({
+    var table = $('#storageTable').DataTable({
         "processing": true,
         "serverSide": true,
         "ajax": {
