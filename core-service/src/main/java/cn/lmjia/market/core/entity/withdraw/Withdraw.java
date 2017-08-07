@@ -2,7 +2,6 @@ package cn.lmjia.market.core.entity.withdraw;
 
 
 import cn.lmjia.market.core.entity.Login;
-import cn.lmjia.market.core.entity.MainGood;
 import cn.lmjia.market.core.entity.MainOrder;
 import cn.lmjia.market.core.entity.support.WithdrawStatus;
 import cn.lmjia.market.core.jpa.JpaFunctionUtils;

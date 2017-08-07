@@ -52,6 +52,10 @@ public class Login implements UserDetails {
      * 可以管理员工列表；没有这个权限则只可以查看
      */
     public static final String ROLE_GRANT = "GRANT";
+    /**
+     * 可以管理订单
+     */
+    public static final String ROLE_ALL_ORDER = "ALL_ORDER";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,7 +94,7 @@ public class Login implements UserDetails {
     @Column(scale = 2, precision = 20)
     private BigDecimal currentGoodPayment = BigDecimal.ZERO;
     /**
-     * 佣金余额，结算佣金余额
+     * 佣金余额，结算佣金余额（定期结算后的佣金余额）
      */
     @Column(scale = 2, precision = 20)
     private BigDecimal commissionBalance = BigDecimal.ZERO;

@@ -5,6 +5,10 @@ $(function () {
 
     var body = $('body');
 
+    if (window.document.location.search.indexOf('InvalidAuthorisingException') >= 0) {
+        $.toptip('按揭码或者身份证号码无效');
+    }
+
     $('#recommendId').makeRecommendSelect();
 
     $('#J_cityPicker, #J_invoiceAddress').cityPicker({
@@ -71,18 +75,18 @@ $(function () {
             $('#J_checkCode').removeClass('displayNone');
             // info.removeClass('displayNone');
             submitBtn.text('提交分期订单');
-            isValid.rules('add', {
-                required: true,
-                messages: {
-                    required: "校验按揭码失败"
-                }
-            });
+            // isValid.rules('add', {
+            //     required: true,
+            //     messages: {
+            //         required: "校验按揭码失败"
+            //     }
+            // });
         } else {
             $('#J_checkCode').addClass('displayNone');
             // info.addClass('displayNone');
             submitBtn.html('下&nbsp;&nbsp;单');
-            isValid.rules('remove');
-            isValid.val('');
+            // isValid.rules('remove');
+            // isValid.val('');
         }
     });
 
@@ -107,39 +111,39 @@ $(function () {
     //         isValid.val('');
     //     }
     // });
-
-    $('#J_checkBtn').click(function () {
-        var mortgageCode = $mortgageCode.val();
-        if (!mortgageCode) return '';
-        $.showLoading('数据校验中');
-        $.ajax('/api/mortgageCode', {
-            method: 'POST',
-            data: {
-                mortgageCode: mortgageCode
-            },
-            dataType: 'json',
-            success: function (data) {
-                if (data.resultCode === 400) {
-                    $.toptip(data.resultMsg);
-                    isValid.val('');
-                    $.hideLoading();
-                    return false;
-                }
-                if (data.resultCode !== 200) {
-                    $.toptip("发送失败，请重试");
-                    $.hideLoading();
-                    return false;
-                }
-                $.hideLoading();
-                $.toptip("校验成功", "success");
-                isValid.val('ok');
-            },
-            error: function () {
-                $.hideLoading();
-                $.toptip("系统错误");
-            }
-        })
-    });
+    //
+    // $('#J_checkBtn').click(function () {
+    //     var mortgageCode = $mortgageCode.val();
+    //     if (!mortgageCode) return '';
+    //     $.showLoading('数据校验中');
+    //     $.ajax('/api/mortgageCode', {
+    //         method: 'POST',
+    //         data: {
+    //             mortgageCode: mortgageCode
+    //         },
+    //         dataType: 'json',
+    //         success: function (data) {
+    //             if (data.resultCode === 400) {
+    //                 $.toptip(data.resultMsg);
+    //                 isValid.val('');
+    //                 $.hideLoading();
+    //                 return false;
+    //             }
+    //             if (data.resultCode !== 200) {
+    //                 $.toptip("发送失败，请重试");
+    //                 $.hideLoading();
+    //                 return false;
+    //             }
+    //             $.hideLoading();
+    //             $.toptip("校验成功", "success");
+    //             isValid.val('ok');
+    //         },
+    //         error: function () {
+    //             $.hideLoading();
+    //             $.toptip("系统错误");
+    //         }
+    //     })
+    // });
     // 粗略的手机号正则
     $.validator.addMethod("isPhone", function (value, element) {
         var mobile = /^1([34578])\d{9}$/;

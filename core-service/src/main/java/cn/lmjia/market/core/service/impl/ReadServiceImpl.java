@@ -110,13 +110,15 @@ public class ReadServiceImpl implements ReadService {
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<BigDecimal> sumQuery = criteriaBuilder.createQuery(BigDecimal.class);
         Root<Commission> root = sumQuery.from(Commission.class);
+
         sumQuery = sumQuery.select(criteriaBuilder.sum(root.get("amount")))
                 .where(
-                        criteriaBuilder.and(
-                                criteriaBuilder.equal(root.get("who"), login)
-                                , Commission.Reality(root, criteriaBuilder)
-                        )
-                );
+                        Commission.listRealitySpecification(login, null)
+                                .toPredicate(root, sumQuery, criteriaBuilder)
+                )
+                .groupBy()
+        ;
+
         // TODO 还应该减去提现的
         // 提现求和
         CriteriaQuery<BigDecimal> sumWithdraw = criteriaBuilder.createQuery(BigDecimal.class);

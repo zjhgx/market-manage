@@ -54,8 +54,9 @@ $(function () {
                 return '<a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_default_disabled">已开票</a>'
             }
             //TODO 退款有两种情况，故有A B 两个页面留意
-            return '<a href="refund-A.html" class="weui-btn weui-btn_mini weui-btn_default_custom">退款</a>' +
-                '<a href="' + invoiceURL + '?orderId=' + obj.orderId + '" class="weui-btn weui-btn_mini weui-btn_default_custom">开发票</a>'
+            // return '<a href="refund-A.html" class="weui-btn weui-btn_mini weui-btn_default_custom">退款</a>' +
+            //     '<a href="' + invoiceURL + '?orderId=' + obj.orderId + '" class="weui-btn weui-btn_mini weui-btn_default_custom">开发票</a>'
+            return '<a href="' + invoiceURL + '?orderId=' + obj.orderId + '" class="weui-btn weui-btn_mini weui-btn_default_custom">开发票</a>';
 
         }
     };
