@@ -7,7 +7,9 @@ import cn.lmjia.market.core.entity.Login;
 import cn.lmjia.market.core.entity.deal.AgentLevel;
 import cn.lmjia.market.core.entity.deal.Commission;
 import cn.lmjia.market.core.entity.support.Address;
+import cn.lmjia.market.core.entity.withdraw.Withdraw;
 import cn.lmjia.market.core.repository.LoginRepository;
+import cn.lmjia.market.core.repository.WechatWithdrawRepository;
 import cn.lmjia.market.core.repository.deal.CommissionRepository;
 import cn.lmjia.market.core.service.ReadService;
 import cn.lmjia.market.core.service.SystemService;
@@ -40,6 +42,8 @@ public class ReadServiceImpl implements ReadService {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private WechatWithdrawRepository wechatWithdrawRepository;
 
     @Override
     public String mobileFor(Object principal) {
@@ -114,8 +118,17 @@ public class ReadServiceImpl implements ReadService {
                         )
                 );
         // TODO 还应该减去提现的
+        // 提现求和
+        CriteriaQuery<BigDecimal> sumWithdraw = criteriaBuilder.createQuery(BigDecimal.class);
+        Root<Withdraw> withdrawRoot = sumWithdraw.from(Withdraw.class);
+        sumWithdraw = sumWithdraw.select(criteriaBuilder.sum(withdrawRoot.get("withdrawMoney")))
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(withdrawRoot.get("payee"),login)
+                        )
+                );
         try {
-            return new Money(entityManager.createQuery(sumQuery).getSingleResult().add(login.getCommissionBalance()));
+            return new Money(entityManager.createQuery(sumWithdraw).getSingleResult().add(login.getCommissionBalance()));
         } catch (NoResultException | NullPointerException ignored) {
             return new Money(login.getCommissionBalance());
         }
@@ -148,7 +161,7 @@ public class ReadServiceImpl implements ReadService {
         return entityManager.createQuery(integerCriteriaQuery).getSingleResult();
     }
 
-    //    @Override
+    //@Override
     @Override
     public String[] titles() {
         String[] titles = new String[systemService.systemLevel()];
