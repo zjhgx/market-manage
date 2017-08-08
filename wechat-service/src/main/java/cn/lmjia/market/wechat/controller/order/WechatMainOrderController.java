@@ -4,14 +4,17 @@ import cn.lmjia.market.core.controller.main.order.AbstractMainOrderController;
 import cn.lmjia.market.core.converter.QRController;
 import cn.lmjia.market.core.entity.Login;
 import cn.lmjia.market.core.entity.MainOrder;
+import cn.lmjia.market.core.entity.channel.Channel;
 import cn.lmjia.market.core.entity.support.Address;
 import cn.lmjia.market.core.entity.trj.TRJPayOrder;
+import cn.lmjia.market.core.service.ChannelService;
 import cn.lmjia.market.core.service.MainOrderService;
 import cn.lmjia.market.core.service.PayAssistanceService;
 import cn.lmjia.market.core.service.PayService;
 import cn.lmjia.market.core.service.SystemService;
 import cn.lmjia.market.core.trj.InvalidAuthorisingException;
 import cn.lmjia.market.core.trj.TRJEnhanceConfig;
+import cn.lmjia.market.core.trj.TRJService;
 import me.jiangcai.lib.sys.service.SystemStringService;
 import me.jiangcai.payment.chanpay.entity.ChanpayPayOrder;
 import me.jiangcai.payment.entity.PayOrder;
@@ -27,13 +30,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
 
 /**
  * @author CJ
@@ -54,6 +56,8 @@ public class WechatMainOrderController extends AbstractMainOrderController {
     private PayService payService;
     @Autowired
     private SystemStringService systemStringService;
+    @Autowired
+    private ChannelService channelService;
 
     /**
      * @return 展示下单页面
@@ -71,8 +75,10 @@ public class WechatMainOrderController extends AbstractMainOrderController {
     @GetMapping(TRJEnhanceConfig.TRJOrderURI)
     public String indexForTRJ(@AuthenticationPrincipal Login login, Model model) {
         model.addAttribute("trj", true);
-        orderIndex(login, model, systemStringService.getCustomSystemString(TRJEnhanceConfig.SS_PriceKey
-                , "trj.order.price.comment", true, BigDecimal.class, BigDecimal.valueOf(3600)));
+        final Channel channel = channelService.findByName(TRJService.ChannelName);
+        if (channel == null)
+            throw new IllegalStateException("必要的分期没有被设置。");
+        orderIndex(login, model, channel);
         return "wechat@orderPlace.html";
     }
 
@@ -99,14 +105,23 @@ public class WechatMainOrderController extends AbstractMainOrderController {
     // &fullAddress=%E6%B1%9F%E7%95%94%E6%99%95%E5%95%A6&mobile=18606509616&goodId=2&leasedType=hzts02&amount=0&activityCode=xzs&recommend=2
     @PostMapping("/wechatOrder")
     @Transactional
-    public ModelAndView newOrder(@OpenId String openId, HttpServletRequest request, String name, Gender gender, Address address, String mobile, long goodId, int amount
-            , String activityCode, @AuthenticationPrincipal Login login, Model model, String authorising, String idNumber)
+    public ModelAndView newOrder(@OpenId String openId, HttpServletRequest request, String name, Gender gender
+            , Address address, String mobile, long goodId, int amount
+            , String activityCode, @AuthenticationPrincipal Login login, Model model
+            , @RequestParam(required = false) Long channelId
+            , String authorising, String idNumber)
             throws SystemMaintainException, InvalidAuthorisingException {
         int age = 20;
         MainOrder order = newOrder(login, model, login.getId(), name, age, gender, address, mobile, goodId, amount
-                , activityCode);
-        if (!StringUtils.isEmpty(authorising) && !StringUtils.isEmpty(idNumber))
-            return payAssistanceService.payOrder(openId, request, order, authorising, idNumber);
+                , activityCode, channelId);
+        if (channelId != null) {
+            Channel channel = channelService.get(channelId);
+            //        if (!StringUtils.isEmpty(authorising) && !StringUtils.isEmpty(idNumber))
+            if (channel.getName().equals(TRJService.ChannelName)) {
+                return payAssistanceService.payOrder(openId, request, order, authorising, idNumber);
+            }
+        }
+
         return payAssistanceService.payOrder(openId, request, order);
     }
 
