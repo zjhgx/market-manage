@@ -9,7 +9,6 @@ import cn.lmjia.market.core.entity.trj.TRJPayOrder;
 import cn.lmjia.market.core.event.MainOrderFinishEvent;
 import cn.lmjia.market.core.repository.MainOrderRepository;
 import cn.lmjia.market.core.repository.trj.AuthorisingInfoRepository;
-import cn.lmjia.market.core.service.ChannelService;
 import cn.lmjia.market.core.service.LoginService;
 import cn.lmjia.market.core.service.ManagerService;
 import cn.lmjia.market.core.service.NoticeService;
@@ -112,8 +111,6 @@ public class TRJServiceImpl implements TRJService {
     private NoticeService noticeService;
     @Autowired
     private ResourceService resourceService;
-    @Autowired
-    private ChannelService channelService;
 
     @Autowired
     public TRJServiceImpl(Environment environment) throws IOException {
@@ -258,6 +255,7 @@ public class TRJServiceImpl implements TRJService {
     }
 
     @PostConstruct
+    @Autowired
     public void init() {
         wechatSendSupplier.registerTemplateMessage(new TRJCheckWarning(), new AbstractTemplateMessageStyle() {
             @Override
@@ -474,8 +472,6 @@ public class TRJServiceImpl implements TRJService {
 
     @Override
     public AuthorisingInfo checkAuthorising(String authorising, String idNumber) throws InvalidAuthorisingException {
-        if (org.springframework.util.StringUtils.isEmpty(authorising))
-            throw new InvalidAuthorisingException(authorising, idNumber);
         AuthorisingInfo info = authorisingInfoRepository.findOne(authorising);
         if (info == null)
             throw new InvalidAuthorisingException(authorising, idNumber);
