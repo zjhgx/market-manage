@@ -106,9 +106,23 @@ $(function () {
     $(document).on('click', '.js-search', function () {
         table.ajax.reload();
     }).on('click', '.js-info', function () {
-        window.location.href = '_withdrawDetail.html?id=' + $(this).data('id');
+        window.location.href = $('body').data('detail-url') + '?id=' + $(this).data('id');
     }).on('click', '.js-pending', function () {
-        window.location.href = '_withdrawPending.html?id=' + $(this).data('id');
+        var id = $(this).data('id');
+        layer.confirm('确定审核？', {
+            btn: ['确定', '取消'] //按钮
+        }, function (index) {
+            $.ajax('/withdrawList/' + id + '/pending', {
+                method: 'put',
+                success: function (res) {
+                    table.ajax.reload();
+                    layer.close(index);
+                },
+                error: function () {
+                    layer.msg('服务器异常');
+                }
+            });
+        });
     });
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {

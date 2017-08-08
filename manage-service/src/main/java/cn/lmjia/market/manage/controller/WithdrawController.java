@@ -21,13 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -45,6 +45,7 @@ public class WithdrawController {
     private WechatWithdrawService wechatWithdrawService;
     @Autowired
     private AgentService agentService;
+
 
     /**
      * 提现申请列表
@@ -65,5 +66,18 @@ public class WithdrawController {
                 );
             }
         };
+    }
+
+    @GetMapping("/withdrawDetail")
+    public String detail(Long id, Model model) {
+        model.addAttribute("currentData", wechatWithdrawRepository.getOne(id));
+        return "_withdrawDetail.html";
+    }
+
+    @PutMapping("/withdrawList/{id}/pending")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
+    public void disable(@PathVariable("id") long id) {
+        wechatWithdrawRepository.getOne(id).setWithdrawStatus(WithdrawStatus.success);
     }
 }

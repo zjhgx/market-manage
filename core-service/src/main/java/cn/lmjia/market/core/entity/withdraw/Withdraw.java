@@ -5,8 +5,10 @@ import cn.lmjia.market.core.entity.Login;
 import cn.lmjia.market.core.entity.MainOrder;
 import cn.lmjia.market.core.entity.support.WithdrawStatus;
 import cn.lmjia.market.core.jpa.JpaFunctionUtils;
+import cn.lmjia.market.core.service.ReadService;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -27,6 +29,8 @@ public class Withdraw {
 
     public static final DateTimeFormatter SerialDateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.CHINA);
 
+    @Autowired
+    private ReadService readService;
     /**
      * 最长长度
      */
@@ -71,7 +75,7 @@ public class Withdraw {
     private BigDecimal withdrawMoney;
 
     /**
-     * 提现时间
+     * 申请提现时间
      */
     @Column(columnDefinition = "timestamp")
     private LocalDateTime withdrawTime;
@@ -98,6 +102,13 @@ public class Withdraw {
      */
     @ManyToOne(cascade={CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REFRESH})
     private Login withdrawAuth;
+
+    /**
+     * 提现认证时间
+     */
+    @Column(columnDefinition = "timestamp")
+    private LocalDateTime withdrawAuthTime;
+
 
     /**
      * @param root            实体

@@ -6,6 +6,7 @@ import cn.lmjia.market.core.entity.MainOrder;
 import cn.lmjia.market.core.entity.deal.AgentLevel;
 import cn.lmjia.market.core.entity.deal.AgentSystem;
 import cn.lmjia.market.core.entity.support.Address;
+import cn.lmjia.market.core.entity.withdraw.Withdraw;
 import cn.lmjia.market.core.repository.deal.AgentLevelRepository;
 import cn.lmjia.market.core.repository.deal.AgentSystemRepository;
 import cn.lmjia.market.core.service.AgentFinancingService;
@@ -103,6 +104,20 @@ public class AgentServiceImpl implements AgentService {
                 -> cb.equal(agentBelongsExpression(
                 // 下单的人
                 root.get("customer").get("agentLevel").get("id").as(Integer.class)
+                , cb.literal(id).as(Integer.class)
+                , cb
+        ), 1);
+    }
+
+    @Override
+    public Specification<Withdraw> manageableWithdraw(Login login) {
+        if (login.isManageable())
+            return null;
+        final AgentLevel agentLevel = highestAgent(login);
+        long id = agentLevel.getId();
+        return (root, query, cb)
+                -> cb.equal(agentBelongsExpression(
+                root.get("payee").get("agentLevel").get("id").as(Integer.class)
                 , cb.literal(id).as(Integer.class)
                 , cb
         ), 1);

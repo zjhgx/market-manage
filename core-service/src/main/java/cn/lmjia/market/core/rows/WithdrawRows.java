@@ -10,6 +10,8 @@ import cn.lmjia.market.core.row.FieldDefinition;
 import cn.lmjia.market.core.row.RowDefinition;
 import cn.lmjia.market.core.row.field.FieldBuilder;
 import cn.lmjia.market.core.row.field.Fields;
+import cn.lmjia.market.core.service.ReadService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Order;
@@ -22,6 +24,8 @@ import java.util.function.Function;
 public abstract  class WithdrawRows implements RowDefinition<Withdraw> {
 
     private final Function<LocalDateTime, String> withdrawTimeFormatter;
+    @Autowired
+    private ReadService readService;
 
     /**
      * 要渲染这些记录的身份
@@ -53,10 +57,9 @@ public abstract  class WithdrawRows implements RowDefinition<Withdraw> {
                 , Fields.asFunction("dealer",root -> root.get("payee").get("guideUser").get("loginName"))
                 , Fields.asBiFunction("withdrawAmount",Withdraw::getWithdrawAmount)
                 , Fields.asBiFunction("withdrawBalance",Withdraw::getWithdrawAmount)//待修改，剩余可提现的余额？？
-                , Fields.asBasic("withdrawSection")//提现区间？？
                 , Fields.asFunction("account",root -> root.get("account"))
                 , Fields.asFunction("payee",root -> root.get("payee"))
-                , Fields.asFunction("invoice",root -> root.get("invoice"))//发票信息??
+                , Fields.asFunction("invoice",root -> root.get("invoice"))
                 , FieldBuilder.asName(Withdraw.class,"withdrawMoney")
                         .addFormat((data,type)
                                 -> withdrawTimeFormatter.apply(((LocalDateTime) data)))

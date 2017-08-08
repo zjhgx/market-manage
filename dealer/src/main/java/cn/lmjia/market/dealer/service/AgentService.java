@@ -144,7 +144,7 @@ public interface AgentService {
     /**
      * 管理员 自然是全部
      * @param login 特定身份
-     * @return 特定身份可管理规格
+     * @return 特定身份可管理
      */
     Specification<Withdraw> manageableWithdraw(Login login);
 
