@@ -16,6 +16,7 @@ import cn.lmjia.market.core.service.SystemService;
 import me.jiangcai.lib.seext.NumberUtils;
 import me.jiangcai.wx.standard.entity.StandardWeixinUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -129,8 +130,9 @@ public class ReadServiceImpl implements ReadService {
                                 criteriaBuilder.equal(withdrawRoot.get("payee"),login)
                         )
                 );
+
         try {
-            return new Money(entityManager.createQuery(sumWithdraw).getSingleResult().add(login.getCommissionBalance()));
+            return new Money(entityManager.createQuery(sumQuery).getSingleResult().add(login.getCommissionBalance()));
         } catch (NoResultException | NullPointerException ignored) {
             return new Money(login.getCommissionBalance());
         }

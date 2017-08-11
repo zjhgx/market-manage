@@ -61,6 +61,7 @@ public class WechatWithdrawController{
             return "wechat@withdraw.html";
         }
         Withdraw withdraw1 = wechatWithdrawService.withdrawNew(payee, account, bank, mobile, withdrawMoney, invoice,logisticsNumber, logisticsCompany);
+        model.addAttribute("mobile",mobile);
         return "wechat@withdrawVerify.html";
     }
 

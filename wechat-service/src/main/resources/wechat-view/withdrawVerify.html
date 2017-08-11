@@ -19,7 +19,7 @@
       th:data-url-sendAuthCode="@{/misc/sendWithdrawCode}">
 <div class="weui-msg">
     <p>我们已经发送了验证码到你的手机：</p>
-    <h3 class="text-big" data-mobile="18900003070" id="J_mobile">189*****3070</h3>
+    <h3 class="text-big" data-mobile="${mobile}" id="J_mobile">${mobile}</h3>
     <form method="post" action="withdrawSuccess.html" th:action="@{/withdrawVerify}"id="J_messageForm">
         <div class="weui-cells weui-cells_form">
             <div class="weui-cell weui-cell_vcode">

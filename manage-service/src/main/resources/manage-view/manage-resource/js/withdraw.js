@@ -41,12 +41,6 @@ $(function () {
                 "title": "剩余可提现金额（元）", "data": "withdrawBalance", "name": "withdrawBalance"
             },
             {
-                "title": "提现区间", "name": "divided", "orderable": false,
-                data: function (item) {
-                    return item.startDate + ' ~ ' + item.endDate;
-                }
-            },
-            {
                 "title": "收款帐号", "data": "account", "name": "account"
             },
             {

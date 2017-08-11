@@ -60,7 +60,7 @@ public abstract  class WithdrawRows implements RowDefinition<Withdraw> {
                 , Fields.asFunction("account",root -> root.get("account"))
                 , Fields.asFunction("payee",root -> root.get("payee"))
                 , Fields.asFunction("invoice",root -> root.get("invoice"))
-                , FieldBuilder.asName(Withdraw.class,"withdrawMoney")
+                , FieldBuilder.asName(Withdraw.class,"withdrawTime")
                         .addFormat((data,type)
                                 -> withdrawTimeFormatter.apply(((LocalDateTime) data)))
                         .build()
@@ -71,7 +71,7 @@ public abstract  class WithdrawRows implements RowDefinition<Withdraw> {
                 , Fields.asFunction("operator",root -> root.get("withdrawAuth"))
                 , Fields.asFunction("remark",root -> root.get("withdrawRemark"))
                 , FieldBuilder.asName(Withdraw.class, "quickPending")
-                        .addSelect(root -> root.get("orderStatus"))
+                        .addSelect(root -> root.get("withdrawStatus"))
                         .addFormat((data, type) -> {
                             WithdrawStatus withdrawStatus = (WithdrawStatus) data;
                             return login.isManageable() && withdrawStatus == WithdrawStatus.success;

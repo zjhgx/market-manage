@@ -14,6 +14,7 @@ import cn.lmjia.market.core.row.supplier.JQueryDataTableDramatizer;
 import cn.lmjia.market.core.rows.DepotRows;
 import cn.lmjia.market.core.rows.MainOrderRows;
 import cn.lmjia.market.core.rows.WithdrawRows;
+import cn.lmjia.market.core.service.ReadService;
 import cn.lmjia.market.core.service.WechatWithdrawService;
 import cn.lmjia.market.dealer.service.AgentService;
 import me.jiangcai.lib.spring.data.AndSpecification;
@@ -29,6 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 @Controller
@@ -45,6 +52,10 @@ public class WithdrawController {
     private WechatWithdrawService wechatWithdrawService;
     @Autowired
     private AgentService agentService;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private ReadService readService;
 
 
     /**
@@ -56,7 +67,33 @@ public class WithdrawController {
             , @RequestParam(value = "dealerMobile", required = false) String mobile
             , @DateTimeFormat(pattern = "yyyy-M-d") @RequestParam(required = false) LocalDate startDate
             , @DateTimeFormat(pattern = "yyyy-M-d") @RequestParam(required = false) LocalDate endDate
-            , WithdrawStatus status) {
+            , WithdrawStatus status,Model model) {
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        //今日提现
+        CriteriaQuery<BigDecimal> sumWithdrawToday = criteriaBuilder.createQuery(BigDecimal.class);
+        Root<Withdraw> withdrawRoot = sumWithdrawToday.from(Withdraw.class);
+        sumWithdrawToday = sumWithdrawToday.select(criteriaBuilder.sum(withdrawRoot.get("withdrawMoney")))
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(withdrawRoot.get("withdrawTime"),LocalDate.now())
+                        )
+                );
+        //历史提现总额
+        CriteriaQuery<BigDecimal> sumWithdrawLogin = criteriaBuilder.createQuery(BigDecimal.class);
+        sumWithdrawLogin = sumWithdrawLogin.select(criteriaBuilder.sum(withdrawRoot.get("withdrawMoney")))
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(withdrawRoot.get("payee"),login)
+                        )
+                );
+        //待提现佣金
+        model.addAttribute("withdrawBalance",readService.currentBalance(login));
+
+        model.addAttribute("withdrawToday",sumWithdrawToday);
+        model.addAttribute("withdrawLogin",sumWithdrawLogin);
+
+
         return new WithdrawRows(login, t -> conversionService.convert(t,String.class)) {
             @Override
             public Specification<Withdraw> specification() {
@@ -66,6 +103,8 @@ public class WithdrawController {
                 );
             }
         };
+
+
     }
 
     @GetMapping("/withdrawDetail")
@@ -77,7 +116,8 @@ public class WithdrawController {
     @PutMapping("/withdrawList/{id}/pending")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void disable(@PathVariable("id") long id) {
+    public void disable(@AuthenticationPrincipal Login login,@PathVariable("id") long id) {
+        wechatWithdrawRepository.getOne(id).setWithdrawAuth(login);
         wechatWithdrawRepository.getOne(id).setWithdrawStatus(WithdrawStatus.success);
     }
 }

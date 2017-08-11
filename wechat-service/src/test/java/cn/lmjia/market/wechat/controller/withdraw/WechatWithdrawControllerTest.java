@@ -5,8 +5,10 @@ import cn.lmjia.market.core.entity.Login;
 import cn.lmjia.market.core.service.ReadService;
 import cn.lmjia.market.wechat.WechatTestBase;
 import cn.lmjia.market.wechat.page.PaySuccessPage;
+import cn.lmjia.market.wechat.page.WechatWithdrawPage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.assertj.core.data.Offset;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,33 +35,24 @@ public class WechatWithdrawControllerTest extends WechatTestBase {
         Login user = createNewUserByShare();
         bindDeveloperWechat(user);
         updateAllRunWith(user);
-
-        makeSuccessOrder(user);
-        driver.get("http://localhost/wechatWithdrawPage");
-        assertThat(driver.getTitle())
-                .isEqualToIgnoringCase("我要提现");
-
+        assertThat(readService.currentBalance(user).getAmount())
+                .isCloseTo(BigDecimal.ZERO, Offset.offset(new BigDecimal("0.00000001")));
+        WechatWithdrawPage wechatWithdrawPage = getWechatWithdraw();
 
         String payee = "oneal";
         String account = "6217001480003532428";
         String bank = "建设银行";
         String mobile = "15267286525";
+        wechatWithdrawPage.submitWithoutInvoice(payee,account,bank,mobile,"1000");
+        wechatWithdrawPage.reloadPageInfo();
+        wechatWithdrawPage.assertHaveTooltip();
+//        makeSuccessOrder(user);
 
-        //新用户可提现佣金余额为0，强行提现
-//        String withdrawUri = mockMvc.perform(wechatPost("/wechatWithdraw")
-//                .param("payee",payee)
-//                .param("account", account)
-//                .param("bank", bank)
-//                .param("mobile", mobile)
-//                .param("withdrawMoney", "500.00")
-//                .param("invoice", "1")
-//        )
-//                .andDo(print())
-//                .andExpect(status().is2xxSuccessful())
-//                .andReturn().getResponse().getHeader("Location");
-//
-//        driver.get("http://localhost" + withdrawUri);
-//        //
+
+
+
+        //提现
+        //
         // 2，新用户
         // 成功下了一笔订单 获得佣金X
         // 尝试提现 会看到可提现金额为X
